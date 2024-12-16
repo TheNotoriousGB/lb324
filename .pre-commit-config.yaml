@@ -1,0 +1,47 @@
+repos:
+  # Black - Formatter für den Python-Code
+  - repo: https://github.com/ambv/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+        language_version: python3.11  # Stelle sicher, dass du die richtige Python-Version verwendest
+
+  # Pre-Commit-Standard-Hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.0.0
+    hooks:
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: mixed-line-ending
+        args:
+          - --fix=auto
+      - id: trailing-whitespace
+      - id: flake8  # flake8 für Python-Code-Qualität
+
+  # Offizielles Flake8-Repository
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.1  # Überprüfe die neueste Version auf der GitHub-Seite
+    hooks:
+      - id: flake8
+        language_version: python3.11  # Stelle sicher, dass die Python-Version hier korrekt ist
+
+  # Lokaler Hook, der sicherstellt, dass Commit-Nachrichten ein Ticket enthalten
+  - repo: local
+    hooks:
+      - id: needs-hash
+        name: commit message needs issues
+        language: pygrep
+        entry: '#\d+'
+        args:
+          - --multiline
+          - --negate
+        stages: [commit-msg]
+
+      - id: pytest-check
+        stages: [pre-commit]
+        types: [python]
+        name: pytest-check
+        entry: python -m pytest
+        language: system
+        pass_filenames: false
+        always_run: true
